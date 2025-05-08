@@ -25,7 +25,7 @@ After=network.target
 ExecStart=/usr/bin/ollama serve
 Restart=always
 User=root
-Environment=OLLAMA_HOST=127.0.0.1
+Environment=OLLAMA_HOST=0.0.0.0
 Environment=OLLAMA_ORIGINS=http://localhost:5678
 
 [Install]
@@ -40,6 +40,9 @@ systemctl start ollama
 # Pull and run Ollama model
 sleep 10
 ollama pull codellama
+
+# Get host IP
+HOST_IP=$(hostname -I | awk '{print $1}')
 
 # Create n8n service
 cat > /etc/systemd/system/n8n.service << 'EOL'
@@ -57,7 +60,9 @@ ExecStart=/usr/bin/docker run -d --name n8n \
   -e N8N_PORT=5678 \
   -e N8N_PROTOCOL=${N8N_PROTOCOL:-http} \
   -e NODE_ENV=production \
-  -e OLLAMA_HOST=127.0.0.1 \
+  -e OLLAMA_HOST=host.docker.internal \
+  -e OLLAMA_PORT=11434 \
+  --add-host=host.docker.internal:host-gateway \
   docker.n8n.io/n8nio/n8n
 Restart=always
 RestartSec=10
