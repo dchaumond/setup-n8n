@@ -1,76 +1,76 @@
-# Installation automatique de n8n et Ollama sur EC2
+# Automated n8n and Ollama Setup on EC2
 
-Ce dépôt contient des scripts d'installation automatique pour configurer n8n (via Docker) et Ollama sur une instance EC2 AWS.
+This repository contains automated installation scripts to set up n8n (via Docker) and Ollama on AWS EC2 instances.
 
-## Prérequis
+## Prerequisites
 
-- Une instance EC2 AWS avec Ubuntu (recommandé : Ubuntu 22.04 LTS)
-- Accès SSH à l'instance
-- Droits sudo sur l'instance
-- Au moins 4 Go de RAM recommandés (2 Go pour n8n + 2 Go pour Ollama)
+- An AWS EC2 instance with Ubuntu (recommended: Ubuntu 22.04 LTS)
+- SSH access to the instance
+- Sudo privileges on the instance
+- At least 4GB of RAM recommended (2GB for n8n + 2GB for Ollama)
 
-## Méthodes d'installation
+## Installation Methods
 
-### Méthode 1 : Installation via cloud-init (Recommandée)
+### Method 1: Installation via cloud-init (Recommended)
 
-1. Lors de la création de votre instance EC2, dans la section "Advanced details"
-2. Dans le champ "User data", copiez le contenu du fichier `cloud-init.yaml`
-3. Lancez l'instance
+1. During EC2 instance creation, go to the "Advanced details" section
+2. In the "User data" field, copy the contents of the `cloud-init.yaml` file
+3. Launch the instance
 
-Cette méthode est recommandée car elle :
-- Utilise le format cloud-init natif d'EC2
-- Gère mieux les dépendances système
-- S'exécute de manière plus fiable au démarrage
-- Permet un meilleur suivi de l'installation
+This method is recommended because it:
+- Uses the native EC2 cloud-init format
+- Better handles system dependencies
+- Runs more reliably at startup
+- Provides better installation tracking
 
-### Méthode 2 : Installation manuelle
+### Method 2: Manual Installation
 
-1. Connectez-vous à votre instance EC2 via SSH
-2. Clonez ce dépôt ou copiez le fichier `setup.sh`
-3. Rendez le script exécutable :
+1. Connect to your EC2 instance via SSH
+2. Clone this repository or copy the `setup.sh` file
+3. Make the script executable:
    ```bash
    chmod +x setup.sh
    ```
-4. Exécutez le script :
+4. Run the script:
    ```bash
    ./setup.sh
    ```
 
-## Vérification de l'installation
+## Verifying the Installation
 
-Une fois l'installation terminée :
+Once the installation is complete:
 
-- n8n sera accessible sur `http://<adresse-ip-ec2>:5678`
-- Ollama sera accessible sur `http://<adresse-ip-ec2>:11434`
+- n8n will be accessible at `http://<ec2-ip-address>:5678`
+- Ollama will be accessible at `http://<ec2-ip-address>:11434`
 
-### Tester Ollama
+### Testing Ollama
 
-Pour tester Ollama, vous pouvez utiliser la commande :
+To test Ollama, you can use the command:
 ```bash
 ollama run llama2
 ```
 
-## Structure des données
+## Data Structure
 
-- Les données de n8n sont persistées dans `/opt/n8n/data`
-- Les modèles Ollama sont stockés dans `~/.ollama`
-- Les deux services sont configurés pour redémarrer automatiquement en cas de problème
+- n8n data is persisted in `/opt/n8n/data`
+- Ollama models are stored in `~/.ollama`
+- Both services are configured to automatically restart in case of failure
 
-## Configuration de sécurité
+## Security Configuration
 
-Pour une utilisation en production, il est recommandé de :
+For production use, it is recommended to:
 
-1. Configurer un groupe de sécurité EC2 pour n'autoriser que les ports nécessaires (5678 pour n8n, 11434 pour Ollama)
-2. Configurer un reverse proxy (comme Nginx) avec SSL
-3. Mettre en place une authentification pour n8n
-4. Configurer des sauvegardes régulières des dossiers `/opt/n8n/data` et `~/.ollama`
-5. Configurer Docker pour utiliser un réseau isolé
-6. Limiter l'accès à Ollama aux seules adresses IP nécessaires
+1. Configure EC2 security groups to allow only necessary ports (5678 for n8n, 11434 for Ollama)
+2. Set up a reverse proxy (like Nginx) with SSL
+3. Implement authentication for n8n
+4. Configure regular backups of `/opt/n8n/data` and `~/.ollama` directories
+5. Configure Docker to use an isolated network
+6. Limit Ollama access to necessary IP addresses only
 
 ## Support
 
-Pour plus d'informations :
-- [Documentation n8n](https://docs.n8n.io/)
-- [Documentation Ollama](https://github.com/ollama/ollama)
-- [Documentation Docker](https://docs.docker.com/)
-- [Documentation cloud-init](https://cloudinit.readthedocs.io/) 
+For more information:
+- [n8n Documentation](https://docs.n8n.io/)
+- [Ollama Documentation](https://github.com/ollama/ollama)
+- [Docker Documentation](https://docs.docker.com/)
+- [cloud-init Documentation](https://cloudinit.readthedocs.io/) 
