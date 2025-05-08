@@ -1,6 +1,6 @@
 # Installation automatique de n8n et Ollama sur EC2
 
-Ce dépôt contient un script d'installation automatique pour configurer n8n (via Docker) et Ollama sur une instance EC2 AWS.
+Ce dépôt contient des scripts d'installation automatique pour configurer n8n (via Docker) et Ollama sur une instance EC2 AWS.
 
 ## Prérequis
 
@@ -9,9 +9,21 @@ Ce dépôt contient un script d'installation automatique pour configurer n8n (vi
 - Droits sudo sur l'instance
 - Au moins 4 Go de RAM recommandés (2 Go pour n8n + 2 Go pour Ollama)
 
-## Installation
+## Méthodes d'installation
 
-### Méthode 1 : Installation manuelle
+### Méthode 1 : Installation via cloud-init (Recommandée)
+
+1. Lors de la création de votre instance EC2, dans la section "Advanced details"
+2. Dans le champ "User data", copiez le contenu du fichier `cloud-init.yaml`
+3. Lancez l'instance
+
+Cette méthode est recommandée car elle :
+- Utilise le format cloud-init natif d'EC2
+- Gère mieux les dépendances système
+- S'exécute de manière plus fiable au démarrage
+- Permet un meilleur suivi de l'installation
+
+### Méthode 2 : Installation manuelle
 
 1. Connectez-vous à votre instance EC2 via SSH
 2. Clonez ce dépôt ou copiez le fichier `setup.sh`
@@ -23,12 +35,6 @@ Ce dépôt contient un script d'installation automatique pour configurer n8n (vi
    ```bash
    ./setup.sh
    ```
-
-### Méthode 2 : Installation via User Data
-
-1. Lors de la création de votre instance EC2, dans la section "Advanced details"
-2. Dans le champ "User data", copiez le contenu du fichier `setup.sh`
-3. Lancez l'instance
 
 ## Vérification de l'installation
 
@@ -66,4 +72,5 @@ Pour une utilisation en production, il est recommandé de :
 Pour plus d'informations :
 - [Documentation n8n](https://docs.n8n.io/)
 - [Documentation Ollama](https://github.com/ollama/ollama)
-- [Documentation Docker](https://docs.docker.com/) 
+- [Documentation Docker](https://docs.docker.com/)
+- [Documentation cloud-init](https://cloudinit.readthedocs.io/) 
