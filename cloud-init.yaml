@@ -81,5 +81,29 @@ runcmd:
   - systemctl enable n8n
   - systemctl start n8n
 
+  # Wait for Ollama service to be ready
+  - sleep 10
+
+  # Download default LLM model (codellama)
+  - |
+    cat > /etc/systemd/system/ollama-download.service << 'EOF'
+    [Unit]
+    Description=Download default Ollama model
+    After=ollama.service
+    Requires=ollama.service
+
+    [Service]
+    Type=oneshot
+    User=ubuntu
+    ExecStart=/usr/bin/ollama pull codellama
+    RemainAfterExit=yes
+
+    [Install]
+    WantedBy=multi-user.target
+    EOF
+  - systemctl daemon-reload
+  - systemctl enable ollama-download
+  - systemctl start ollama-download
+
 # Write a message to the console
 final_message: "The system is finally up, after $UPTIME seconds" 

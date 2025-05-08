@@ -8,6 +8,7 @@ This repository contains automated installation scripts to set up n8n (via Docke
 - SSH access to the instance
 - Sudo privileges on the instance
 - At least 4GB of RAM recommended (2GB for n8n + 2GB for Ollama)
+- At least 20GB of disk space (for n8n, Ollama, and the default LLM model)
 
 ## Installation Methods
 
@@ -22,6 +23,7 @@ This method is recommended because it:
 - Better handles system dependencies
 - Runs more reliably at startup
 - Provides better installation tracking
+- Automatically downloads the default LLM model (codellama)
 
 ### Method 2: Manual Installation
 
@@ -42,13 +44,29 @@ Once the installation is complete:
 
 - n8n will be accessible at `http://<ec2-ip-address>:5678`
 - Ollama will be accessible at `http://<ec2-ip-address>:11434`
+- The default LLM model (codellama) will be automatically downloaded and ready to use
 
 ### Testing Ollama
 
-To test Ollama, you can use the command:
+To test Ollama with the default model:
 ```bash
-ollama run llama2
+ollama run codellama
 ```
+
+You can also use other models by pulling them:
+```bash
+ollama pull mistral
+ollama pull llama2
+```
+
+## Why CodeLlama?
+
+CodeLlama is set as the default model because it:
+- Is specifically trained for code and automation tasks
+- Has better understanding of programming languages and APIs
+- Can help with n8n workflow creation and debugging
+- Provides more accurate responses for automation-related queries
+- Has good performance for both code generation and natural language tasks
 
 ## Data Structure
 
