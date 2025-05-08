@@ -1,14 +1,49 @@
 # Automated n8n and Ollama Setup on EC2
 
-This repository contains automated installation scripts to set up n8n (via Docker) and Ollama on AWS EC2 instances.
+This repository contains automated installation scripts to set up n8n (via Docker) and Ollama on AWS EC2 instances. Ollama is configured to run locally and is only accessible by n8n on the same instance.
 
 ## Prerequisites
 
-- An AWS EC2 instance with Ubuntu (recommended: Ubuntu 22.04 LTS)
-- SSH access to the instance
-- Sudo privileges on the instance
-- At least 4GB of RAM recommended (2GB for n8n + 2GB for Ollama)
-- At least 20GB of disk space (for n8n, Ollama, and the default LLM model)
+### EC2 Instance Requirements
+
+#### Minimum Requirements
+- Instance type: t3.medium
+  - 2 vCPUs
+  - 4 GB RAM
+  - Good for testing and development
+  - Suitable for basic automation tasks
+
+#### Recommended Requirements
+- Instance type: t3.large
+  - 2 vCPUs
+  - 8 GB RAM
+  - Better performance for production use
+  - Can handle multiple n8n workflows
+
+#### Production Requirements
+- Instance type: t3.xlarge
+  - 4 vCPUs
+  - 16 GB RAM
+  - Optimal for production workloads
+  - Can handle complex workflows and concurrent executions
+
+### Storage Requirements
+- Root volume: At least 20GB
+- Additional EBS volume (recommended): 30GB+
+  - For storing n8n data
+  - For storing Ollama models
+  - For workflow logs and backups
+
+### Network Requirements
+- VPC with internet access
+- Security group allowing:
+  - Port 5678 (n8n)
+  - SSH access (port 22)
+  - Note: Ollama is only accessible locally (127.0.0.1)
+
+### Operating System
+- Ubuntu 22.04 LTS (recommended)
+- Ubuntu 20.04 LTS (supported)
 
 ## Installation Methods
 
@@ -24,6 +59,7 @@ This method is recommended because it:
 - Runs more reliably at startup
 - Provides better installation tracking
 - Automatically downloads the default LLM model (codellama)
+- Configures Ollama for local-only access
 
 ### Method 2: Manual Installation
 
@@ -43,20 +79,17 @@ This method is recommended because it:
 Once the installation is complete:
 
 - n8n will be accessible at `http://<ec2-ip-address>:5678`
-- Ollama will be accessible at `http://<ec2-ip-address>:11434`
+- Ollama will be running locally and accessible only to n8n
 - The default LLM model (codellama) will be automatically downloaded and ready to use
 
 ### Testing Ollama
 
-To test Ollama with the default model:
+To test Ollama locally (from the EC2 instance):
 ```bash
-ollama run codellama
-```
-
-You can also use other models by pulling them:
-```bash
-ollama pull mistral
-ollama pull llama2
+curl http://localhost:11434/api/generate -d '{
+  "model": "codellama",
+  "prompt": "Hello, how are you?"
+}'
 ```
 
 ## Why CodeLlama?
@@ -68,22 +101,34 @@ CodeLlama is set as the default model because it:
 - Provides more accurate responses for automation-related queries
 - Has good performance for both code generation and natural language tasks
 
-## Data Structure
+## Performance Considerations
 
-- n8n data is persisted in `/opt/n8n/data`
-- Ollama models are stored in `~/.ollama`
-- Both services are configured to automatically restart in case of failure
+### Memory Usage
+- CodeLlama requires approximately 4GB of RAM
+- n8n typically uses 1-2GB of RAM
+- System and other processes need 1-2GB
+- Total recommended: 8GB minimum, 16GB for production
+
+### CPU Usage
+- CodeLlama inference is CPU-intensive
+- n8n workflows can be CPU-intensive depending on complexity
+- Local-only access reduces network overhead
+
+### Storage Performance
+- EBS gp3 volumes recommended for better I/O performance
+- Consider using instance store for temporary data if available
+- Regular backups of n8n data and Ollama models
 
 ## Security Configuration
 
 For production use, it is recommended to:
 
-1. Configure EC2 security groups to allow only necessary ports (5678 for n8n, 11434 for Ollama)
-2. Set up a reverse proxy (like Nginx) with SSL
+1. Configure EC2 security groups to allow only necessary ports (5678 for n8n)
+2. Set up a reverse proxy (like Nginx) with SSL for n8n
 3. Implement authentication for n8n
 4. Configure regular backups of `/opt/n8n/data` and `~/.ollama` directories
 5. Configure Docker to use an isolated network
-6. Limit Ollama access to necessary IP addresses only
+6. Note: Ollama is already secured by running only on localhost
 
 ## Support
 

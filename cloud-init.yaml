@@ -34,7 +34,7 @@ runcmd:
     After=network-online.target
 
     [Service]
-    Environment="OLLAMA_HOST=0.0.0.0"
+    Environment="OLLAMA_HOST=127.0.0.1"
     ExecStart=/usr/bin/ollama serve
     Restart=always
     RestartSec=3
