@@ -74,6 +74,24 @@ This method is recommended because it:
    ./setup.sh
    ```
 
+### Method 3: Terraform Installation
+
+1. Make sure you have Terraform installed on your machine
+2. Create an AWS key pair named `n8n-key` in your AWS console
+3. Initialize Terraform:
+   ```bash
+   terraform init
+   ```
+4. Review the planned changes:
+   ```bash
+   terraform plan
+   ```
+5. Apply the configuration:
+   ```bash
+   terraform apply
+   ```
+6. The output will show the public IP address of your instance
+
 ## Verifying the Installation
 
 Once the installation is complete:
@@ -136,4 +154,40 @@ For more information:
 - [n8n Documentation](https://docs.n8n.io/)
 - [Ollama Documentation](https://github.com/ollama/ollama)
 - [Docker Documentation](https://docs.docker.com/)
-- [cloud-init Documentation](https://cloudinit.readthedocs.io/) 
+- [cloud-init Documentation](https://cloudinit.readthedocs.io/)
+
+## Accessing n8n
+
+After installation, access n8n at:
+```
+http://<your-instance-ip>:5678
+```
+
+## Ollama Configuration
+
+Ollama is configured to:
+- Run as a systemd service
+- Only listen on localhost (127.0.0.1)
+- Only accept connections from n8n (localhost:5678)
+- Use the CodeLlama model by default
+
+## Security Notes
+
+- The instance is configured with basic security settings
+- Ollama is restricted to localhost access only
+- n8n is configured to connect to Ollama securely
+- Consider implementing additional security measures for production use
+
+## Cleaning Up
+
+### For Method 1 & 2:
+Terminate the EC2 instance through the AWS Console
+
+### For Method 3:
+```bash
+terraform destroy
+```
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details. 
